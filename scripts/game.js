@@ -10,13 +10,25 @@ function newGame() {
     game.score = 0;
     game.playerMoves = [];
     game.currentGame = [];
+    for (let circle of document.getElementsByClassName('circle')) {
+        if (circle.getAttribute('data-listener') !== 'true') {
+            circle.addEventListener('click', (e) => {
+                let move = e.target.getAttribute('id');
+                lightsOn(move);
+                game.playerMoves.push(move);
+                lightsOn(move);
+                playerTurn();
+            });
+            circle.setAttribute('data-listener', 'true');
+        }
+    }
     showScore();
     addTurn();
 }
 
 function addTurn() {
     game.playerMoves = [];
-    game.currentGame.push(game.choices[Math.floor(Math.random() * 4)]);
+    game.currentGame.push(game.choices[(Math.floor(Math.random() * 4))]);
     showTurns();
 }
 
@@ -42,4 +54,15 @@ function showTurns() {
     }, 800);
 }
 
-module.exports = { game, newGame, showScore, addTurn, lightsOn, showTurns };
+function playerTurn() {
+    let i = game.playerMoves.length - 1;
+    if (game.currentGame[i] === game.playerMoves[i]) {
+        if (game.currentGame.length == game.playerMoves.length) {
+            game.score++;
+            showScore();
+            addTurn();
+        }
+    }
+}
+
+module.exports = { game, newGame, showScore, addTurn, lightsOn, showTurns, playerTurn };
